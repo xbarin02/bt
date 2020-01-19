@@ -280,6 +280,7 @@ T div32(T t)
 	return acc;
 }
 
+/* absolute value */
 T tabs(T t)
 {
 	if (t.p >= t.n) {
