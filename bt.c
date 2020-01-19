@@ -279,7 +279,7 @@ T div32(T t)
 		}
 
 		if (d.n > d.p) {
-			acc = sub(acc, div32_stub(neg(d)));
+			acc = add(acc, div32_stub(d));
 		}
 	}
 
