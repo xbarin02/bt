@@ -289,6 +289,11 @@ T tabs(T t)
 	}
 }
 
+int is_positive(T t)
+{
+	return t.p >= t.n;
+}
+
 int less_than(T t, ulong b)
 {
 	T tb = encode(b);
@@ -297,7 +302,7 @@ int less_than(T t, ulong b)
 	return d.p < d.n;
 }
 
-T any_div32(T t)
+T floor_div32(T t)
 {
 	T acc = t;
 	T d; /* difference t - t/32*32 */
@@ -313,11 +318,15 @@ T any_div32(T t)
 	while (1) {
 		d = sub(t, mul32(acc));
 
-		if ( less_than(tabs(d), 32) ) {
+		if (less_than(tabs(d), 32)) {
 			break;
 		}
 
 		acc = add(acc, div32_stub(d));
+	}
+
+	if (!is_positive(d)) {
+		acc = sub(acc, encode(1));
 	}
 
 	return acc;
@@ -356,7 +365,7 @@ void test()
 	}
 
 	for (n = 0; n < 100000; ++n) {
-		assert((long)(n/32) - (long)(decode(any_div32(encode(n)))) <= 1);
+		assert(n/32 == decode(floor_div32(encode(n))));
 	}
 
 	for (n = 0; n < 1000000; n += 2) {
