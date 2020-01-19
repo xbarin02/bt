@@ -280,6 +280,49 @@ T div32(T t)
 	return acc;
 }
 
+T tabs(T t)
+{
+	if (t.p >= t.n) {
+		return t;
+	} else {
+		return neg(t);
+	}
+}
+
+int less_than(T t, ulong b)
+{
+	T tb = encode(b);
+	T d = sub(t, tb);
+
+	return d.p < d.n;
+}
+
+T any_div32(T t)
+{
+	T acc = t;
+	T d; /* difference t - t/32*32 */
+
+	acc = add(acc, div_pow3(acc, 32));
+	acc = add(acc, div_pow3(acc, 16));
+	acc = add(acc, div_pow3(acc, 8));
+	acc = add(acc, div_pow3(acc, 4));
+
+	acc = div_pow3(acc, 3);
+
+	/* correction term */
+	while (1) {
+		d = sub(t, mul32(acc));
+
+		if ( less_than(tabs(d), 32) ) {
+			break;
+		}
+
+		acc = add(acc, div32_stub(d));
+	}
+
+	return acc;
+}
+
 void test()
 {
 	ulong n;
@@ -310,6 +353,10 @@ void test()
 
 	for (n = 0; n < 10000; ++n) {
 		assert(2*n == decode(mul2(encode(n))));
+	}
+
+	for (n = 0; n < 10000; ++n) {
+		assert(labs((long)(n/32) - (long)(decode(any_div32(encode(n))))) <= 1);
 	}
 
 	for (n = 0; n < 1000000; n += 2) {
