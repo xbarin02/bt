@@ -355,8 +355,8 @@ void test()
 		assert(2*n == decode(mul2(encode(n))));
 	}
 
-	for (n = 0; n < 10000; ++n) {
-		assert(labs((long)(n/32) - (long)(decode(any_div32(encode(n))))) <= 1);
+	for (n = 0; n < 100000; ++n) {
+		assert((long)(n/32) - (long)(decode(any_div32(encode(n)))) <= 1);
 	}
 
 	for (n = 0; n < 1000000; n += 2) {
