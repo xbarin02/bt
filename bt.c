@@ -45,8 +45,9 @@ size_t trit_size(T t)
 {
 	ulong np = t.n | t.p;
 
-	if (np == 0)
+	if (np == 0) {
 		return 0;
+	}
 
 	return 64 - (size_t)__builtin_clzl(np);
 }
@@ -162,6 +163,16 @@ T add(T a, T b)
 	return a;
 }
 
+T neg(T a)
+{
+	T a_;
+
+	a_.n = a.p;
+	a_.p = a.n;
+
+	return a_;
+}
+
 T sub(T a, T b)
 {
 	T b_;
@@ -235,6 +246,20 @@ T div8(T t)
 	return div_pow3(acc, 2);
 }
 
+T div32_stub(T t)
+{
+	T acc = t;
+
+	acc = add(acc, div_pow3(acc, 32));
+	acc = add(acc, div_pow3(acc, 16));
+	acc = add(acc, div_pow3(acc, 8));
+	acc = add(acc, div_pow3(acc, 4));
+
+	acc = div_pow3(acc, 3);
+
+	return acc;
+}
+
 T div32(T t)
 {
 	T acc = t;
@@ -249,12 +274,12 @@ T div32(T t)
 
 	/* correction term */
 	while (is_nonzero(d = sub(t, mul32(acc)))) {
-		if (d.n < d.p) {
-			acc = add(acc, encode(1));
+		if (d.p > d.n) {
+			acc = add(acc, div32_stub(d));
 		}
 
 		if (d.n > d.p) {
-			acc = sub(acc, encode(1));
+			acc = sub(acc, div32_stub(neg(d)));
 		}
 	}
 
@@ -301,8 +326,7 @@ void test()
 		assert(n/8 == decode(div8(encode(n))));
 	}
 
-	/* FIXME does not work < 1000000 */
-	for (n = 0; n < 100000; n += 32) {
+	for (n = 0; n < 1000000; n += 32) {
 		assert(n/32 == decode(div32(encode(n))));
 	}
 }
