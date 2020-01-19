@@ -332,6 +332,37 @@ T floor_div32(T t)
 	return acc;
 }
 
+T floor_mod32(T t)
+{
+	T acc = t;
+	T d; /* difference t - t/32*32 */
+
+	acc = add(acc, div_pow3(acc, 32));
+	acc = add(acc, div_pow3(acc, 16));
+	acc = add(acc, div_pow3(acc, 8));
+	acc = add(acc, div_pow3(acc, 4));
+
+	acc = div_pow3(acc, 3);
+
+	/* correction term */
+	while (1) {
+		d = sub(t, mul32(acc));
+
+		if (less_than(tabs(d), 32)) {
+			break;
+		}
+
+		acc = add(acc, div32_stub(d));
+	}
+
+	if (!is_positive(d)) {
+		acc = sub(acc, encode(1));
+		d = add(d, encode(32));
+	}
+
+	return d;
+}
+
 void test()
 {
 	ulong n;
@@ -366,6 +397,10 @@ void test()
 
 	for (n = 0; n < 100000; ++n) {
 		assert(n/32 == decode(floor_div32(encode(n))));
+	}
+
+	for (n = 0; n < 100000; ++n) {
+		assert(n%32 == decode(floor_mod32(encode(n))));
 	}
 
 	for (n = 0; n < 1000000; n += 2) {
