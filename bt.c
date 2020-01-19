@@ -177,6 +177,21 @@ T mul2(T t)
 	return add(t, t);
 }
 
+T mul4(T t)
+{
+	return mul2(mul2(t));
+}
+
+T mul16(T t)
+{
+	return mul4(mul4(t));
+}
+
+T mul32(T t)
+{
+	return mul2(mul16(t));
+}
+
 /* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
 T div2(T t)
 {
@@ -194,9 +209,11 @@ T div2(T t)
 	/* correction term */
 	{
 		T d = sub(t, mul2(acc));
+
 		if (d.n < d.p) {
 			acc = add(acc, encode(1));
 		}
+
 		if (d.n > d.p) {
 			acc = sub(acc, encode(1));
 		}
@@ -216,6 +233,32 @@ T div8(T t)
 	acc = add(acc, div_pow3(acc, 2));
 
 	return div_pow3(acc, 2);
+}
+
+T div32(T t)
+{
+	T acc = t;
+	T d; /* difference t - t/32*32 */
+
+	acc = add(acc, div_pow3(acc, 32));
+	acc = add(acc, div_pow3(acc, 16));
+	acc = add(acc, div_pow3(acc, 8));
+	acc = add(acc, div_pow3(acc, 4));
+
+	acc = div_pow3(acc, 3);
+
+	/* correction term */
+	while (is_nonzero(d = sub(t, mul32(acc)))) {
+		if (d.n < d.p) {
+			acc = add(acc, encode(1));
+		}
+
+		if (d.n > d.p) {
+			acc = sub(acc, encode(1));
+		}
+	}
+
+	return acc;
 }
 
 void test()
@@ -256,6 +299,11 @@ void test()
 
 	for (n = 0; n < 10000000; n += 8) {
 		assert(n/8 == decode(div8(encode(n))));
+	}
+
+	/* FIXME does not work < 1000000 */
+	for (n = 0; n < 100000; n += 32) {
+		assert(n/32 == decode(div32(encode(n))));
 	}
 }
 
