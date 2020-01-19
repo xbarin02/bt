@@ -274,13 +274,7 @@ T div32(T t)
 
 	/* correction term */
 	while (is_nonzero(d = sub(t, mul32(acc)))) {
-		if (d.p > d.n) {
-			acc = add(acc, div32_stub(d));
-		}
-
-		if (d.n > d.p) {
-			acc = add(acc, div32_stub(d));
-		}
+		acc = add(acc, div32_stub(d));
 	}
 
 	return acc;
@@ -326,7 +320,7 @@ void test()
 		assert(n/8 == decode(div8(encode(n))));
 	}
 
-	for (n = 0; n < 1000000; n += 32) {
+	for (n = 0; n < 10000000; n += 32) {
 		assert(n/32 == decode(div32(encode(n))));
 	}
 }
