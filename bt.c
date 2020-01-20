@@ -41,6 +41,29 @@ T encode(ulong n)
 	return t;
 }
 
+ulong decode(T t)
+{
+	ulong n = 0;
+	size_t ti = 63;
+	while (ti != (size_t)-1) {
+		n *= 3;
+
+		/* assert: t is normalized */
+		if (t.n & (1UL << ti)) {
+			n--;
+			t.n -= 1UL << ti; /* reset trit */
+		}
+		if (t.p & (1UL << ti)) {
+			n++;
+			t.p -= 1UL << ti; /* reset trit */
+		}
+
+		ti--;
+	}
+
+	return n;
+}
+
 size_t trit_size(T t)
 {
 	ulong np = t.n | t.p;
@@ -83,29 +106,7 @@ void print(T t)
 	putchar('\n');
 }
 
-ulong decode(T t)
-{
-	ulong n = 0;
-	size_t ti = 63;
-	while (ti != (size_t)-1) {
-		n *= 3;
-
-		/* assert: t is normalized */
-		if (t.n & (1UL << ti)) {
-			n--;
-			t.n -= 1UL << ti; /* reset trit */
-		}
-		if (t.p & (1UL << ti)) {
-			n++;
-			t.p -= 1UL << ti; /* reset trit */
-		}
-
-		ti--;
-	}
-
-	return n;
-}
-
+/* left shift by 1 */
 T mul3(T t)
 {
 	t.n <<= 1;
@@ -114,6 +115,7 @@ T mul3(T t)
 	return t;
 }
 
+/* right shift by 1 */
 T div3(T t)
 {
 	t.n >>= 1;
@@ -122,6 +124,7 @@ T div3(T t)
 	return t;
 }
 
+/* right shift */
 T div_pow3(T t, size_t k)
 {
 	t.n >>= k;
@@ -138,6 +141,32 @@ int is_normalized(T t)
 int is_nonzero(T t)
 {
 	return t.n != 0 || t.p != 0;
+}
+
+T neg(T a)
+{
+	T a_;
+
+	a_.n = a.p;
+	a_.p = a.n;
+
+	return a_;
+}
+
+/* absolute value */
+T tabs(T t)
+{
+	if (t.p >= t.n) {
+		return t;
+	} else {
+		return neg(t);
+	}
+}
+
+/* is positive or zero */
+int is_positive(T t)
+{
+	return t.p >= t.n;
 }
 
 /* https://en.wikipedia.org/wiki/Balanced_ternary#Multi-trit_addition_and_subtraction */
@@ -161,16 +190,6 @@ T add(T a, T b)
 	}
 
 	return a;
-}
-
-T neg(T a)
-{
-	T a_;
-
-	a_.n = a.p;
-	a_.p = a.n;
-
-	return a_;
 }
 
 T sub(T a, T b)
@@ -271,21 +290,6 @@ T div32(T t)
 	}
 
 	return acc;
-}
-
-/* absolute value */
-T tabs(T t)
-{
-	if (t.p >= t.n) {
-		return t;
-	} else {
-		return neg(t);
-	}
-}
-
-int is_positive(T t)
-{
-	return t.p >= t.n;
 }
 
 int less_than(T t, ulong b)
