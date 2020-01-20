@@ -401,15 +401,7 @@ void test()
 	}
 
 	for (n = 0; n < 10000; ++n) {
-		assert(2*n == decode(mul2(encode(n))));
-	}
-
-	for (n = 0; n < 100000; ++n) {
-		assert(n/32 == decode(floor_div32(encode(n))));
-	}
-
-	for (n = 0; n < 100000; ++n) {
-		assert(n%32 == decode(floor_mod32(encode(n))));
+		assert(2 * n == decode(mul2(encode(n))));
 	}
 
 	for (n = 0; n < 1000000; n += 2) {
@@ -422,6 +414,14 @@ void test()
 
 	for (n = 0; n < 10000000; n += 32) {
 		assert(n/32 == decode(div32(encode(n))));
+	}
+
+	for (n = 0; n < 100000; ++n) {
+		assert(n/32 == decode(floor_div32(encode(n))));
+	}
+
+	for (n = 0; n < 100000; ++n) {
+		assert(n%32 == decode(floor_mod32(encode(n))));
 	}
 }
 
