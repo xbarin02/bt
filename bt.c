@@ -302,14 +302,7 @@ T div32(T t)
 T floor_div32(T t)
 {
 	T d; /* difference t - t/32*32 */
-	T acc = t;
-
-	acc = add(acc, div_pow3(acc, 32));
-	acc = add(acc, div_pow3(acc, 16));
-	acc = add(acc, div_pow3(acc, 8));
-	acc = add(acc, div_pow3(acc, 4));
-
-	acc = div_pow3(acc, 3);
+	T acc = div32_stub(t);
 
 	/* correction term */
 	while (1) {
@@ -333,14 +326,7 @@ T floor_div32(T t)
 T floor_mod32(T t)
 {
 	T d; /* difference t - t/32*32 */
-	T acc = t;
-
-	acc = add(acc, div_pow3(acc, 32));
-	acc = add(acc, div_pow3(acc, 16));
-	acc = add(acc, div_pow3(acc, 8));
-	acc = add(acc, div_pow3(acc, 4));
-
-	acc = div_pow3(acc, 3);
+	T acc = div32_stub(t);
 
 	/* correction term */
 	while (1) {
