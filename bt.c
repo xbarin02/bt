@@ -314,6 +314,34 @@ T div_2_k(T t, size_t k)
 	return acc;
 }
 
+T approx_div_2_k(T t, size_t k)
+{
+	T d; /* difference t - t / 2^k * 2^k */
+	T acc = div_2_k_stub(t, k);
+
+	/* correction term */
+	if (is_nonzero(d = sub(t, mul_2_k(acc, k)))) {
+		acc = add(acc, div_2_k_stub(d, k));
+	}
+
+	return acc;
+}
+
+T approx_mod_2_k(T t, size_t k)
+{
+	T d; /* difference t - t / 2^k * 2^k */
+	T acc = div_2_k_stub(t, k);
+
+	/* correction term */
+	if (is_nonzero(d = sub(t, mul_2_k(acc, k)))) {
+		acc = add(acc, div_2_k_stub(d, k));
+	}
+
+	d = sub(t, mul_2_k(acc, k));
+
+	return d;
+}
+
 T floor_div32(T t)
 {
 	T d; /* difference t - t/32*32 */
@@ -473,6 +501,13 @@ void test()
 	printf("test: mod(n / 32)\n");
 	for (n = 0; n < 100000; ++n) {
 		assert(n%32 == decode(floor_mod32(encode(n))));
+	}
+
+	printf("test: n / 32 * 32 + n %% 32\n");
+	for (n = 0; n < 100000; ++n) {
+		T q = approx_div_2_k(encode(n), 5);
+		T r = approx_mod_2_k(encode(n), 5);
+		assert(n == decode(add(mul_2_k(q, 5), r)));
 	}
 }
 
