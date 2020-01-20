@@ -223,21 +223,6 @@ T mul2(T t)
 	return add(t, t);
 }
 
-T mul4(T t)
-{
-	return mul2(mul2(t));
-}
-
-T mul16(T t)
-{
-	return mul4(mul4(t));
-}
-
-T mul32(T t)
-{
-	return mul2(mul16(t));
-}
-
 /* t * 2^k */
 T mul_2_k(T t, size_t k)
 {
@@ -250,6 +235,11 @@ T mul_2_k(T t, size_t k)
 	}
 
 	return mul_2_k(mul_2_k(t, k / 2), k / 2);
+}
+
+T mul32(T t)
+{
+	return mul_2_k(t, 5);
 }
 
 /* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
