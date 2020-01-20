@@ -358,7 +358,7 @@ T floor_mod32(T t)
 
 void test()
 {
-	ulong n;
+	ulong n, m;
 
 	for (n = 0; n < 10000; ++n) {
 		assert(is_normalized(encode(n)));
@@ -388,12 +388,16 @@ void test()
 		assert(n / 9 == decode(div_pow3(encode(n), 2)));
 	}
 
-	for (n = 0; n < 10000; ++n) {
-		assert(n+1+2*n == decode(add(encode(n+1), encode(2*n))));
+	for (n = 0; n < 1000; ++n) {
+		for (m = 0; m < 1000; ++m) {
+			assert(n + m == decode(add(encode(n), encode(m))));
+		}
 	}
 
-	for (n = 0; n < 10000; ++n) {
-		assert((2*n+3)-(n+1) == decode(sub(encode(2*n+3), encode(n+1))));
+	for (n = 0; n < 1000; ++n) {
+		for (m = n; m < 1000; ++m) {
+			assert(n - m == decode(sub(encode(n), encode(m))));
+		}
 	}
 
 	for (n = 0; n < 10000; ++n) {
