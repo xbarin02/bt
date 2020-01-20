@@ -359,9 +359,9 @@ T mod_2_k_1(T t, size_t k)
 {
 	T acc = t;
 	T d;
-	T m = encode((1UL << k) - 1); /* modulus */
+	T m = encode((1UL << k) - 1); /* modulus 2^k - 1 */
 
-	if (is_positive_or_zero(acc) && less_than(tabs(acc), m)) {
+	if (is_positive_or_zero(acc) && less_than(acc, m)) {
 		return acc;
 	}
 
