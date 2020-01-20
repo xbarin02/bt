@@ -172,8 +172,13 @@ T tabs(T t)
 	}
 }
 
-/* is positive or zero */
 int is_positive(T t)
+{
+	return t.p > t.n;
+}
+
+/* is positive or zero */
+int is_positive_or_zero(T t)
 {
 	return t.p >= t.n;
 }
@@ -181,7 +186,7 @@ int is_positive(T t)
 /* signed decode */
 long sdecode(T t)
 {
-	return is_positive(t) ? (long)decode(t) : -(long)decode(neg(t));
+	return is_positive_or_zero(t) ? (long)decode(t) : -(long)decode(neg(t));
 }
 
 /* https://en.wikipedia.org/wiki/Balanced_ternary#Multi-trit_addition_and_subtraction */
@@ -297,7 +302,7 @@ T div_2_k_slow(T t, size_t k)
 
 	/* correction */
 	while (is_nonzero(d = sub(t, mul_2_k(acc, k)))) {
-		if (is_positive(d)) {
+		if (is_positive_or_zero(d)) {
 		    acc = add(acc, add(c, encode(1)));
 		} else {
 		    acc = sub(acc, add(c, encode(1)));
@@ -359,7 +364,7 @@ T mod_2_k_1(T t, size_t k)
 	do {
 		T d_ = encode(0);
 		if (less_than(tabs(acc), m)) {
-			if (!is_positive(acc)) {
+			if (!is_positive_or_zero(acc)) {
 				acc = add(acc, m);
 			}
 			return acc;
@@ -381,14 +386,11 @@ T mod_2_k_1(T t, size_t k)
 		acc = add(acc, d);
 #if 1
 		/* over modulus */
-		if (is_positive(acc)) {
-			while (!less_than(acc, m)) {
-				acc = sub(acc, m);
-			}
-		} else {
-			while (less_than(acc, encode(0))) {
-				acc = add(acc, m);
-			}
+		while (!is_positive_or_zero(acc)) {
+			acc = add(acc, m);
+		}
+		while (!less_than(acc, m)) {
+			acc = sub(acc, m);
 		}
 #endif
 	} while (1);
@@ -410,7 +412,7 @@ T floor_div32(T t)
 		acc = add(acc, div32_stub(d));
 	}
 
-	if (!is_positive(d)) {
+	if (!is_positive_or_zero(d)) {
 		acc = sub(acc, encode(1));
 		d = add(d, encode(32));
 	}
@@ -434,7 +436,7 @@ T floor_mod32(T t)
 		acc = add(acc, div32_stub(d));
 	}
 
-	if (!is_positive(d)) {
+	if (!is_positive_or_zero(d)) {
 		acc = sub(acc, encode(1));
 		d = add(d, encode(32));
 	}
