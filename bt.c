@@ -366,66 +366,76 @@ void test()
 {
 	ulong n, m;
 
-	for (n = 0; n < 10000; ++n) {
-		assert(is_normalized(encode(n)));
-	}
-
+	printf("test: n\n");
 	for (n = 0; n < 10000; ++n) {
 		assert(n == decode(encode(n)));
 	}
 
+	printf("test: is_normalized(n)\n");
 	for (n = 0; n < 10000; ++n) {
-		assert(3 * n == decode(mul3(encode(n))));
+		assert(is_normalized(encode(n)));
 	}
 
-	for (n = 0; n < 10000; n += 3) {
-		assert(n / 3 == decode(div3(encode(n))));
-	}
-
+	printf("test: parity(n)\n");
 	for (n = 0; n < 10000; ++n) {
 		assert(n % 2 == (ulong)parity(encode(n)));
 	}
 
+	printf("test: 3 * n\n");
+	for (n = 0; n < 10000; ++n) {
+		assert(3 * n == decode(mul3(encode(n))));
+	}
+
+	printf("test: n / 3\n");
+	for (n = 0; n < 10000; n += 3) {
+		assert(n / 3 == decode(div3(encode(n))));
+	}
+
+	printf("test: 9 * n\n");
 	for (n = 0; n < 10000; ++n) {
 		assert(9 * n == decode(mul_pow3(encode(n), 2)));
 	}
 
+	printf("test: n / 9\n");
 	for (n = 0; n < 10000; n += 9) {
 		assert(n / 9 == decode(div_pow3(encode(n), 2)));
 	}
 
+	printf("test: n + m\n");
 	for (n = 0; n < 1000; ++n) {
 		for (m = 0; m < 1000; ++m) {
 			assert(n + m == decode(add(encode(n), encode(m))));
 		}
 	}
 
+	printf("test: n - m\n");
 	for (n = 0; n < 1000; ++n) {
 		for (m = n; m < 1000; ++m) {
 			assert(n - m == decode(sub(encode(n), encode(m))));
 		}
 	}
 
-	for (n = 0; n < 10000; ++n) {
-		assert(2 * n == decode(mul2(encode(n))));
-	}
-
+	printf("test: 2 * n\n");
 	for (n = 0; n < 10000; ++n) {
 		assert(2 * n == decode(mul_2_k(encode(n), 1)));
 	}
 
+	printf("test: 4 * n\n");
 	for (n = 0; n < 10000; ++n) {
 		assert(4 * n == decode(mul_2_k(encode(n), 2)));
 	}
 
+	printf("test: 8 * n\n");
 	for (n = 0; n < 10000; ++n) {
 		assert(8 * n == decode(mul_2_k(encode(n), 3)));
 	}
 
+	printf("test: 16 * n\n");
 	for (n = 0; n < 10000; ++n) {
 		assert(16 * n == decode(mul_2_k(encode(n), 4)));
 	}
 
+	printf("test: 32 * n\n");
 	for (n = 0; n < 10000; ++n) {
 		assert(32 * n == decode(mul_2_k(encode(n), 5)));
 	}
