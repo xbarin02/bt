@@ -247,6 +247,7 @@ size_t spow2(size_t k)
 	return (size_t)1 << k;
 }
 
+/* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
 T div_2_k_stub(T t, size_t k)
 {
 	size_t m = (k + 1) / 2;
@@ -266,16 +267,6 @@ T div_2_k_stub(T t, size_t k)
 	return acc;
 }
 
-T div2_stub(T t)
-{
-	return div_2_k_stub(t, 1);
-}
-
-T div8_stub(T t)
-{
-	return div_2_k_stub(t, 3);
-}
-
 T div32_stub(T t)
 {
 	return div_2_k_stub(t, 5);
@@ -287,27 +278,11 @@ T div_2_k(T t, size_t k)
 	T acc = div_2_k_stub(t, k);
 
 	/* correction term */
-	while (is_nonzero(d = sub(t, mul_2_k(acc, k)))) {
+	if (is_nonzero(d = sub(t, mul_2_k(acc, k)))) {
 		acc = add(acc, div_2_k(d, k));
 	}
 
 	return acc;
-}
-
-/* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
-T div2(T t)
-{
-	return div_2_k(t, 1);
-}
-
-T div8(T t)
-{
-	return div_2_k(t, 3);
-}
-
-T div32(T t)
-{
-	return div_2_k(t, 5);
 }
 
 T floor_div32(T t)
