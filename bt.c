@@ -362,9 +362,6 @@ T mod_2_k_1(T t, size_t k)
 	T m = encode((1UL << k) - 1); /* modulus */
 
 	if (less_than(tabs(acc), m)) {
-		if (!is_positive_or_zero(acc)) {
-			acc = add(acc, m);
-		}
 		return acc;
 	}
 
@@ -372,7 +369,7 @@ T mod_2_k_1(T t, size_t k)
 	d = sub(t, mul_2_k(acc, k)); /* d = acc % 2^k */
 
 	acc = add(acc, d); /* reduce */
-#if 1
+
 	/* over modulus */
 	while (!is_positive_or_zero(acc)) {
 		acc = add(acc, m);
@@ -380,7 +377,7 @@ T mod_2_k_1(T t, size_t k)
 	while (!less_than(acc, m)) {
 		acc = sub(acc, m);
 	}
-#endif
+
 	return acc;
 }
 
