@@ -115,6 +115,15 @@ T mul3(T t)
 	return t;
 }
 
+/* left shift */
+T mul_pow3(T t, size_t k)
+{
+	t.n <<= k;
+	t.p <<= k;
+
+	return t;
+}
+
 /* right shift by 1 */
 T div3(T t)
 {
@@ -360,11 +369,23 @@ void test()
 	}
 
 	for (n = 0; n < 10000; ++n) {
-		assert(3*n == decode(mul3(encode(n))));
+		assert(3 * n == decode(mul3(encode(n))));
+	}
+
+	for (n = 0; n < 10000; n += 3) {
+		assert(n / 3 == decode(div3(encode(n))));
 	}
 
 	for (n = 0; n < 10000; ++n) {
 		assert(n % 2 == (ulong)parity(encode(n)));
+	}
+
+	for (n = 0; n < 10000; ++n) {
+		assert(9 * n == decode(mul_pow3(encode(n), 2)));
+	}
+
+	for (n = 0; n < 10000; n += 9) {
+		assert(n / 9 == decode(div_pow3(encode(n), 2)));
 	}
 
 	for (n = 0; n < 10000; ++n) {
