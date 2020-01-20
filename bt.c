@@ -242,8 +242,7 @@ T mul32(T t)
 	return mul_2_k(t, 5);
 }
 
-/* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
-T div2(T t)
+T div2_stub(T t)
 {
 	T acc = t;
 
@@ -255,6 +254,14 @@ T div2(T t)
 	acc = add(acc, div_pow3(acc, 1));
 
 	acc = div_pow3(acc, 1);
+
+	return acc;
+}
+
+/* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
+T div2(T t)
+{
+	T acc = div2_stub(t);
 
 	/* correction term */
 	{
@@ -272,7 +279,7 @@ T div2(T t)
 	return acc;
 }
 
-T div8(T t)
+T div8_stub(T t)
 {
 	T acc = t;
 
@@ -282,7 +289,16 @@ T div8(T t)
 	acc = add(acc, div_pow3(acc, 4));
 	acc = add(acc, div_pow3(acc, 2));
 
-	return div_pow3(acc, 2);
+	acc = div_pow3(acc, 2);
+
+	return acc;
+}
+
+T div8(T t)
+{
+	T acc = div8_stub(t);
+
+	return acc;
 }
 
 T div32_stub(T t)
