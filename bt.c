@@ -268,59 +268,17 @@ T div_2_k_stub(T t, size_t k)
 
 T div2_stub(T t)
 {
-#if 0
-	T acc = t;
-
-	acc = add(acc, div_pow3(acc, 32));
-	acc = add(acc, div_pow3(acc, 16));
-	acc = add(acc, div_pow3(acc, 8));
-	acc = add(acc, div_pow3(acc, 4));
-	acc = add(acc, div_pow3(acc, 2));
-	acc = add(acc, div_pow3(acc, 1));
-
-	acc = div_pow3(acc, 1);
-
-	return acc;
-#else
 	return div_2_k_stub(t, 1);
-#endif
 }
 
 T div8_stub(T t)
 {
-#if 0
-	T acc = t;
-
-	acc = add(acc, div_pow3(acc, 32));
-	acc = add(acc, div_pow3(acc, 16));
-	acc = add(acc, div_pow3(acc, 8));
-	acc = add(acc, div_pow3(acc, 4));
-	acc = add(acc, div_pow3(acc, 2));
-
-	acc = div_pow3(acc, 2);
-
-	return acc;
-#else
 	return div_2_k_stub(t, 3);
-#endif
 }
 
 T div32_stub(T t)
 {
-#if 0
-	T acc = t;
-
-	acc = add(acc, div_pow3(acc, 32));
-	acc = add(acc, div_pow3(acc, 16));
-	acc = add(acc, div_pow3(acc, 8));
-	acc = add(acc, div_pow3(acc, 4));
-
-	acc = div_pow3(acc, 3);
-
-	return acc;
-#else
 	return div_2_k_stub(t, 5);
-#endif
 }
 
 /* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
