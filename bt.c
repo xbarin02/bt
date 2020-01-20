@@ -357,28 +357,29 @@ T approx_mod_2_k(T t, size_t k)
 /* EXPERIMENTAL */
 T mod_2_k_1(T t, size_t k)
 {
-	T acc = t;
-	T d;
-	T m = encode((1UL << k) - 1); /* modulus 2^k - 1 */
+	T q = t;
+	T r;
+	T Mk = encode((1UL << k) - 1); /* modulus 2^k - 1 */
 
-	if (is_positive_or_zero(acc) && less_than(acc, m)) {
-		return acc;
+	if (is_positive_or_zero(q) && less_than(q, Mk)) {
+		return q;
 	}
 
-	acc = div_2_k_stub(acc, k); /* acc = acc / 2^k */
-	d = sub(t, mul_2_k(acc, k)); /* d = acc % 2^k */
+	q = div_2_k_stub(q, k); /* acc = acc / 2^k */
+	r = sub(t, mul_2_k(q, k)); /* d = acc % 2^k */
 
-	acc = add(acc, d); /* reduce */
+	/* reduce */
+	q = add(q, r);
 
 	/* over modulus */
-	while (!is_positive_or_zero(acc)) {
-		acc = add(acc, m);
+	while (!is_positive_or_zero(q)) {
+		q = add(q, Mk);
 	}
-	while (!less_than(acc, m)) {
-		acc = sub(acc, m);
+	while (!less_than(q, Mk)) {
+		q = sub(q, Mk);
 	}
 
-	return acc;
+	return q;
 }
 
 T floor_div32(T t)
