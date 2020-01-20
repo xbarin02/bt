@@ -262,15 +262,8 @@ T div32_stub(T t)
 
 T div32(T t)
 {
-	T acc = t;
 	T d; /* difference t - t/32*32 */
-
-	acc = add(acc, div_pow3(acc, 32));
-	acc = add(acc, div_pow3(acc, 16));
-	acc = add(acc, div_pow3(acc, 8));
-	acc = add(acc, div_pow3(acc, 4));
-
-	acc = div_pow3(acc, 3);
+	T acc = div32_stub(t);
 
 	/* correction term */
 	while (is_nonzero(d = sub(t, mul32(acc)))) {
