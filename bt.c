@@ -357,7 +357,7 @@ T mod_2_k_1(T t, size_t k)
 	T m = encode((1UL << k) - 1); /* modulus */
 
 	do {
-		T d_ = encode(10000000); /* FIXME */
+		T d_ = encode(0);
 		if (less_than(tabs(acc), m)) {
 			if (!is_positive(acc)) {
 				acc = add(acc, m);
@@ -368,7 +368,7 @@ T mod_2_k_1(T t, size_t k)
 #if 1
 		/* correction term */
 		while (!leq_than(tabs(d = sub(t, mul_2_k(acc, k))), m)) {
-			if (leq_than(tabs(d_), tabs(d))) {
+			if (is_nonzero(d_) && leq_than(tabs(d_), tabs(d))) {
 				/* avoid divergence */
 				break;
 			}
@@ -381,8 +381,14 @@ T mod_2_k_1(T t, size_t k)
 		acc = add(acc, d);
 #if 1
 		/* over modulus */
-		while (!less_than(acc, m)) {
-			acc = sub(acc, m);
+		if (is_positive(acc)) {
+			while (!less_than(acc, m)) {
+				acc = sub(acc, m);
+			}
+		} else {
+			while (less_than(acc, encode(0))) {
+				acc = add(acc, m);
+			}
 		}
 #endif
 	} while (1);
