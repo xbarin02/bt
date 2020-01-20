@@ -370,7 +370,7 @@ T mod_2_k_1(T t, size_t k)
 			return acc;
 		}
 		acc = div_2_k_stub(acc, k); /* acc = acc / 2^k */
-#if 1
+#if 0
 		/* correction term */
 		while (!leq_than(tabs(d = sub(t, mul_2_k(acc, k))), m)) {
 			if (is_nonzero(d_) && leq_than(tabs(d_), tabs(d))) {
