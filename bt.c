@@ -202,6 +202,13 @@ T sub(T a, T b)
 	return add(a, b_);
 }
 
+int less_than(T a, T b)
+{
+	T d = sub(a, b);
+
+	return d.p < d.n;
+}
+
 T mul2(T t)
 {
 	return add(t, t);
@@ -292,14 +299,6 @@ T div32(T t)
 	return acc;
 }
 
-int less_than(T t, ulong b)
-{
-	T tb = encode(b);
-	T d = sub(t, tb);
-
-	return d.p < d.n;
-}
-
 T floor_div32(T t)
 {
 	T d; /* difference t - t/32*32 */
@@ -316,7 +315,7 @@ T floor_div32(T t)
 	while (1) {
 		d = sub(t, mul32(acc));
 
-		if (less_than(tabs(d), 32)) {
+		if (less_than(tabs(d), encode(32))) {
 			break;
 		}
 
@@ -347,7 +346,7 @@ T floor_mod32(T t)
 	while (1) {
 		d = sub(t, mul32(acc));
 
-		if (less_than(tabs(d), 32)) {
+		if (less_than(tabs(d), encode(32))) {
 			break;
 		}
 
