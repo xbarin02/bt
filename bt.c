@@ -568,7 +568,7 @@ void test()
 	}
 
 	/* very slow for k = 1 */
-	for (k = 3; k < 10; k += 2) {
+	for (k = 3; k < 16; k += 2) {
 		ulong M = (1UL << k) - 1;
 		printf("test: n %% %lu\n", M);
 		for (n = 0; n < 100000; ++n) {
