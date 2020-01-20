@@ -354,7 +354,6 @@ T approx_mod_2_k(T t, size_t k)
 	return sub(t, mul_2_k(acc, k));
 }
 
-/* EXPERIMENTAL */
 T mod_2_k_1(T t, size_t k)
 {
 	T q = t;
@@ -544,7 +543,7 @@ void test()
 		assert(n%32 == decode(floor_mod32(encode(n))));
 	}
 #endif
-	for (k = 1; k < 10; k += 2) {
+	for (k = 1; k < 16; k += 2) {
 		printf("test: n / %lu * %lu + n %% %lu\n", spow2(k), spow2(k), spow2(k));
 		for (n = 0; n < 100000; ++n) {
 			T q = approx_div_2_k(encode(n), k);
