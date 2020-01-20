@@ -242,8 +242,33 @@ T mul32(T t)
 	return mul_2_k(t, 5);
 }
 
+size_t spow2(size_t k)
+{
+	return (size_t)1 << k;
+}
+
+T div_2_k_stub(T t, size_t k)
+{
+	size_t m = (k + 1) / 2;
+	size_t r = spow2((k - 1) / 2);
+	size_t s;
+
+	T acc = t;
+
+	assert(k % 2 == 1);
+
+	for (s = r; s < sizeof(ulong) * 8; s *= 2) {
+		acc = add(acc, div_pow3(acc, s));
+	}
+
+	acc = div_pow3(acc, m);
+
+	return acc;
+}
+
 T div2_stub(T t)
 {
+#if 0
 	T acc = t;
 
 	acc = add(acc, div_pow3(acc, 32));
@@ -256,10 +281,14 @@ T div2_stub(T t)
 	acc = div_pow3(acc, 1);
 
 	return acc;
+#else
+	return div_2_k_stub(t, 1);
+#endif
 }
 
 T div8_stub(T t)
 {
+#if 0
 	T acc = t;
 
 	acc = add(acc, div_pow3(acc, 32));
@@ -271,10 +300,14 @@ T div8_stub(T t)
 	acc = div_pow3(acc, 2);
 
 	return acc;
+#else
+	return div_2_k_stub(t, 3);
+#endif
 }
 
 T div32_stub(T t)
 {
+#if 0
 	T acc = t;
 
 	acc = add(acc, div_pow3(acc, 32));
@@ -285,6 +318,9 @@ T div32_stub(T t)
 	acc = div_pow3(acc, 3);
 
 	return acc;
+#else
+	return div_2_k_stub(t, 5);
+#endif
 }
 
 /* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
