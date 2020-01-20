@@ -281,45 +281,35 @@ T div32_stub(T t)
 	return div_2_k_stub(t, 5);
 }
 
-/* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
-T div2(T t)
+T div2(T t); /* forward */
+
+T div_2_k(T t, size_t k)
 {
-	T acc = div2_stub(t);
+	T d; /* difference t - t / 2^k * 2^k */
+	T acc = div_2_k_stub(t, k);
 
 	/* correction term */
-	{
-		T d = sub(t, mul2(acc));
-
-		if (d.n < d.p) {
-			acc = add(acc, encode(1));
-		}
-
-		if (d.n > d.p) {
-			acc = sub(acc, encode(1));
-		}
+	while (is_nonzero(d = sub(t, mul_2_k(acc, k)))) {
+		acc = add(acc, div_2_k(d, k));
 	}
 
 	return acc;
+}
+
+/* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
+T div2(T t)
+{
+	return div_2_k(t, 1);
 }
 
 T div8(T t)
 {
-	T acc = div8_stub(t);
-
-	return acc;
+	return div_2_k(t, 3);
 }
 
 T div32(T t)
 {
-	T d; /* difference t - t/32*32 */
-	T acc = div32_stub(t);
-
-	/* correction term */
-	while (is_nonzero(d = sub(t, mul32(acc)))) {
-		acc = add(acc, div32_stub(d));
-	}
-
-	return acc;
+	return div_2_k(t, 5);
 }
 
 T floor_div32(T t)
@@ -439,15 +429,23 @@ void test()
 	}
 
 	for (n = 0; n < 1000000; n += 2) {
-		assert(n/2 == decode(div2(encode(n))));
+		assert(n / 2 == decode(div2(encode(n))));
 	}
 
 	for (n = 0; n < 10000000; n += 8) {
-		assert(n/8 == decode(div8(encode(n))));
+		assert(n / 8 == decode(div8(encode(n))));
 	}
 
 	for (n = 0; n < 10000000; n += 32) {
-		assert(n/32 == decode(div32(encode(n))));
+		assert(n / 32 == decode(div32(encode(n))));
+	}
+
+	for (n = 0; n < 10000000; n += 128) {
+		assert(n / 128 == decode(div_2_k(encode(n), 7)));
+	}
+
+	for (n = 0; n < 10000000; n += 512) {
+		assert(n / 512 == decode(div_2_k(encode(n), 9)));
 	}
 
 	for (n = 0; n < 100000; ++n) {
