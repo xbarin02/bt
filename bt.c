@@ -178,6 +178,12 @@ int is_positive(T t)
 	return t.p >= t.n;
 }
 
+/* signed decode */
+long sdecode(T t)
+{
+	return is_positive(t) ? (long)decode(t) : -(long)decode(neg(t));
+}
+
 /* https://en.wikipedia.org/wiki/Balanced_ternary#Multi-trit_addition_and_subtraction */
 T add(T a, T b)
 {
@@ -272,6 +278,29 @@ T div32_stub(T t)
 	return div_2_k_stub(t, 5);
 }
 
+T div_2_k_slow(T t, size_t k)
+{
+	T d; /* difference t - t / 2^k * 2^k */
+	T acc = div_2_k_stub(t, k);
+	T c; /* correction term */
+
+	d = sub(t, mul_2_k(acc, k));
+	c = tabs(d); /* overkill */
+	c = div_2_k_stub(c, k);
+
+	/* correction */
+	while (is_nonzero(d = sub(t, mul_2_k(acc, k)))) {
+		if (is_positive(d)) {
+		    acc = add(acc, add(c, encode(1)));
+		} else {
+		    acc = sub(acc, add(c, encode(1)));
+		}
+		c = div3(c);
+	}
+
+	return acc;
+}
+
 T div_2_k(T t, size_t k)
 {
 	T d; /* difference t - t / 2^k * 2^k */
@@ -279,7 +308,7 @@ T div_2_k(T t, size_t k)
 
 	/* correction term */
 	if (is_nonzero(d = sub(t, mul_2_k(acc, k)))) {
-		acc = add(acc, div_2_k(d, k));
+		acc = add(acc, div_2_k_slow(d, k));
 	}
 
 	return acc;
@@ -401,30 +430,37 @@ void test()
 		assert(32 * n == decode(mul_2_k(encode(n), 5)));
 	}
 
+	printf("test: n / 2\n");
 	for (n = 0; n < 1000000; n += 2) {
 		assert(n / 2 == decode(div_2_k(encode(n), 1)));
 	}
 
+	printf("test: n / 8\n");
 	for (n = 0; n < 10000000; n += 8) {
 		assert(n / 8 == decode(div_2_k(encode(n), 3)));
 	}
 
+	printf("test: n / 32\n");
 	for (n = 0; n < 10000000; n += 32) {
 		assert(n / 32 == decode(div_2_k(encode(n), 5)));
 	}
 
+	printf("test: n / 128\n");
 	for (n = 0; n < 10000000; n += 128) {
 		assert(n / 128 == decode(div_2_k(encode(n), 7)));
 	}
 
+	printf("test: n / 512\n");
 	for (n = 0; n < 10000000; n += 512) {
 		assert(n / 512 == decode(div_2_k(encode(n), 9)));
 	}
 
+	printf("test: floor(n / 32)\n");
 	for (n = 0; n < 100000; ++n) {
 		assert(n/32 == decode(floor_div32(encode(n))));
 	}
 
+	printf("test: mod(n / 32)\n");
 	for (n = 0; n < 100000; ++n) {
 		assert(n%32 == decode(floor_mod32(encode(n))));
 	}
