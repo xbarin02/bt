@@ -224,6 +224,13 @@ int less_than(T a, T b)
 	return d.p < d.n;
 }
 
+int leq_than(T a, T b)
+{
+	T d = sub(a, b);
+
+	return d.p <= d.n;
+}
+
 T mul2(T t)
 {
 	return add(t, t);
@@ -350,6 +357,7 @@ T mod_2_k_1(T t, size_t k)
 	T m = encode((1UL << k) - 1); /* modulus */
 
 	do {
+		T d_ = encode(10000000); /* FIXME */
 		if (less_than(tabs(acc), m)) {
 			if (!is_positive(acc)) {
 				acc = add(acc, m);
@@ -359,8 +367,13 @@ T mod_2_k_1(T t, size_t k)
 		acc = div_2_k_stub(acc, k); /* acc = acc / 2^k */
 #if 1
 		/* correction term */
-		while (!less_than(tabs(d = sub(t, mul_2_k(acc, k))), m)) {
+		while (!leq_than(tabs(d = sub(t, mul_2_k(acc, k))), m)) {
+			if (leq_than(tabs(d_), tabs(d))) {
+				/* avoid divergence */
+				break;
+			}
 			acc = add(acc, div_2_k_stub(d, k));
+			d_ = d;
 		}
 #endif
 		d = sub(t, mul_2_k(acc, k)); /* d = acc % 2^k */
@@ -374,7 +387,6 @@ T mod_2_k_1(T t, size_t k)
 #endif
 	} while (1);
 }
-
 
 T floor_div32(T t)
 {
@@ -547,9 +559,13 @@ void test()
 		}
 	}
 
-	printf("test: n %% 31\n");
-	for (n = 0; n < 100000; ++n) {
-		assert( n % 31 == decode(mod_2_k_1(encode(n), 5)) );
+	/* very slow for k = 1 */
+	for (k = 3; k < 10; k += 2) {
+		ulong M = (1UL << k) - 1;
+		printf("test: n %% %lu\n", M);
+		for (n = 0; n < 100000; ++n) {
+			assert( n % M == decode(mod_2_k_1(encode(n), k)) );
+		}
 	}
 }
 
