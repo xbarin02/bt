@@ -342,6 +342,40 @@ T approx_mod_2_k(T t, size_t k)
 	return sub(t, mul_2_k(acc, k));
 }
 
+/* EXPERIMENTAL */
+T mod_2_k_1(T t, size_t k)
+{
+	T acc = t;
+	T d;
+	T m = encode((1UL << k) - 1); /* modulus */
+
+	do {
+		if (less_than(tabs(acc), m)) {
+			if (!is_positive(acc)) {
+				acc = add(acc, m);
+			}
+			return acc;
+		}
+		acc = div_2_k_stub(acc, k); /* acc = acc / 2^k */
+#if 1
+		/* correction term */
+		while (!less_than(tabs(d = sub(t, mul_2_k(acc, k))), m)) {
+			acc = add(acc, div_2_k_stub(d, k));
+		}
+#endif
+		d = sub(t, mul_2_k(acc, k)); /* d = acc % 2^k */
+
+		acc = add(acc, d);
+#if 1
+		/* over modulus */
+		while (!less_than(acc, m)) {
+			acc = sub(acc, m);
+		}
+#endif
+	} while (1);
+}
+
+
 T floor_div32(T t)
 {
 	T d; /* difference t - t/32*32 */
@@ -511,6 +545,11 @@ void test()
 			T r = approx_mod_2_k(encode(n), k);
 			assert(n == decode(add(mul_2_k(q, k), r)));
 		}
+	}
+
+	printf("test: n %% 31\n");
+	for (n = 0; n < 100000; ++n) {
+		assert( n % 31 == decode(mod_2_k_1(encode(n), 5)) );
 	}
 }
 
