@@ -302,8 +302,8 @@ int less_than(T t, ulong b)
 
 T floor_div32(T t)
 {
-	T acc = t;
 	T d; /* difference t - t/32*32 */
+	T acc = t;
 
 	acc = add(acc, div_pow3(acc, 32));
 	acc = add(acc, div_pow3(acc, 16));
@@ -325,6 +325,7 @@ T floor_div32(T t)
 
 	if (!is_positive(d)) {
 		acc = sub(acc, encode(1));
+		d = add(d, encode(32));
 	}
 
 	return acc;
@@ -332,8 +333,8 @@ T floor_div32(T t)
 
 T floor_mod32(T t)
 {
-	T acc = t;
 	T d; /* difference t - t/32*32 */
+	T acc = t;
 
 	acc = add(acc, div_pow3(acc, 32));
 	acc = add(acc, div_pow3(acc, 16));
