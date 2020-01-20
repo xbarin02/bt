@@ -361,39 +361,27 @@ T mod_2_k_1(T t, size_t k)
 	T d;
 	T m = encode((1UL << k) - 1); /* modulus */
 
-	do {
-		T d_ = encode(0);
-		if (less_than(tabs(acc), m)) {
-			if (!is_positive_or_zero(acc)) {
-				acc = add(acc, m);
-			}
-			return acc;
-		}
-		acc = div_2_k_stub(acc, k); /* acc = acc / 2^k */
-#if 0
-		/* correction term */
-		while (!leq_than(tabs(d = sub(t, mul_2_k(acc, k))), m)) {
-			if (is_nonzero(d_) && leq_than(tabs(d_), tabs(d))) {
-				/* avoid divergence */
-				break;
-			}
-			acc = add(acc, div_2_k_stub(d, k));
-			d_ = d;
-		}
-#endif
-		d = sub(t, mul_2_k(acc, k)); /* d = acc % 2^k */
-
-		acc = add(acc, d);
-#if 1
-		/* over modulus */
-		while (!is_positive_or_zero(acc)) {
+	if (less_than(tabs(acc), m)) {
+		if (!is_positive_or_zero(acc)) {
 			acc = add(acc, m);
 		}
-		while (!less_than(acc, m)) {
-			acc = sub(acc, m);
-		}
+		return acc;
+	}
+
+	acc = div_2_k_stub(acc, k); /* acc = acc / 2^k */
+	d = sub(t, mul_2_k(acc, k)); /* d = acc % 2^k */
+
+	acc = add(acc, d); /* reduce */
+#if 1
+	/* over modulus */
+	while (!is_positive_or_zero(acc)) {
+		acc = add(acc, m);
+	}
+	while (!less_than(acc, m)) {
+		acc = sub(acc, m);
+	}
 #endif
-	} while (1);
+	return acc;
 }
 
 T floor_div32(T t)
