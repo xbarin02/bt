@@ -552,11 +552,11 @@ void test()
 		}
 	}
 
-	/* very slow for k = 1 */
-	for (k = 3; k < 16; k += 2) {
+	/* very slow for small k = 1, 3, etc. */
+	for (k = 5; k < 32; k += 2) {
 		ulong M = (1UL << k) - 1;
 		printf("test: n %% %lu\n", M);
-		for (n = 0; n < 100000; ++n) {
+		for (n = 0; n < 200000; ++n) {
 			assert( n % M == decode(mod_2_k_1(encode(n), k)) );
 		}
 	}
