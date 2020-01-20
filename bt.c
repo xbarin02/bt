@@ -281,8 +281,6 @@ T div32_stub(T t)
 	return div_2_k_stub(t, 5);
 }
 
-T div2(T t); /* forward */
-
 T div_2_k(T t, size_t k)
 {
 	T d; /* difference t - t / 2^k * 2^k */
@@ -429,15 +427,15 @@ void test()
 	}
 
 	for (n = 0; n < 1000000; n += 2) {
-		assert(n / 2 == decode(div2(encode(n))));
+		assert(n / 2 == decode(div_2_k(encode(n), 1)));
 	}
 
 	for (n = 0; n < 10000000; n += 8) {
-		assert(n / 8 == decode(div8(encode(n))));
+		assert(n / 8 == decode(div_2_k(encode(n), 3)));
 	}
 
 	for (n = 0; n < 10000000; n += 32) {
-		assert(n / 32 == decode(div32(encode(n))));
+		assert(n / 32 == decode(div_2_k(encode(n), 5)));
 	}
 
 	for (n = 0; n < 10000000; n += 128) {
