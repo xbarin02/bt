@@ -238,6 +238,20 @@ T mul32(T t)
 	return mul2(mul16(t));
 }
 
+/* t * 2^k */
+T mul_2_k(T t, size_t k)
+{
+	if (k % 2 == 1) {
+		return mul2(mul_2_k(t, k - 1));
+	}
+
+	if (k == 0) {
+		return t;
+	}
+
+	return mul_2_k(mul_2_k(t, k / 2), k / 2);
+}
+
 /* http://homepage.divms.uiowa.edu/~jones/ternary/multiply.shtml#div2 */
 T div2(T t)
 {
@@ -402,6 +416,26 @@ void test()
 
 	for (n = 0; n < 10000; ++n) {
 		assert(2 * n == decode(mul2(encode(n))));
+	}
+
+	for (n = 0; n < 10000; ++n) {
+		assert(2 * n == decode(mul_2_k(encode(n), 1)));
+	}
+
+	for (n = 0; n < 10000; ++n) {
+		assert(4 * n == decode(mul_2_k(encode(n), 2)));
+	}
+
+	for (n = 0; n < 10000; ++n) {
+		assert(8 * n == decode(mul_2_k(encode(n), 3)));
+	}
+
+	for (n = 0; n < 10000; ++n) {
+		assert(16 * n == decode(mul_2_k(encode(n), 4)));
+	}
+
+	for (n = 0; n < 10000; ++n) {
+		assert(32 * n == decode(mul_2_k(encode(n), 5)));
 	}
 
 	for (n = 0; n < 1000000; n += 2) {
